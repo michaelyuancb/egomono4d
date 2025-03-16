@@ -4,7 +4,7 @@
 
 **[[Project Website](https://egomono4d.github.io/)] [[Arxiv](https://arxiv.org/abs/2411.09145)] [[BibTex](#jump)]**
 
-EgoMono4D is an early exploration to **apply self-supervised learning for generalizable 4D pointclouds sequence reconstruction** to the label-scarce egocentric field, enabling fast and dense reconstruction. Different from some supervised methods like [DUSt3R](https://dust3r.europe.naverlabs.com/) or [MonSt3R](https://monst3r-project.github.io/), it is trained solely on large-scale unlabeled video datasets, representing a new paradigm for 4D reconstrucion. 
+EgoMono4D is an early exploration to **apply self-supervised learning for generalizable 4D pointclouds sequence reconstruction** to the label-scarce egocentric field, enabling fast and dense reconstruction. Different from supervised methods like [DUSt3R](https://dust3r.europe.naverlabs.com/) or [MonSt3R](https://monst3r-project.github.io/), it is trained solely on large-scale unlabeled video datasets, representing a new paradigm for 4D reconstrucion. 
 
 ![teaser_pic](assets/teaser.png "teaser_pic")
 
