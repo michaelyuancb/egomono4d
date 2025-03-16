@@ -1,0 +1,5 @@
+name: unidepth
+
+cache_dir: null
+estimator: unidepth_v2_large       # unidepth_v2_[large, small]  
+finetune_head: true                # whether to only finetune dpt head of depth-anything-v2

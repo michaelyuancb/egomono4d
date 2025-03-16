@@ -1,0 +1,5 @@
+name: cotracker
+
+grid_size: 35
+similarity_threshold: 0.75
+cache_dir: null

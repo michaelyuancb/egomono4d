@@ -1,0 +1,15 @@
+name: nvds_unidepth
+
+cache_dir: null
+estimator: unidepth_v2_large       # unidepth_v2_[large, small]  
+finetune_head: true                # whether to only finetune dpt head of depth-anything-v2
+
+unet_num: 1
+unet_channels: [256, 256, 384, 384]     # torch.Size([20, 42, 56, 1024])
+unet_kernel_size: 3
+unet_groups: 1
+
+transformer_depth: 2
+transformer_heads: 4
+transformer_dim_head: 64
+transformer_mlp_dim: 256

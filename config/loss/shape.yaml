@@ -1,0 +1,6 @@
+shape:
+  weight: 10.0
+  enable_after: 0
+  dynamic_coef: 1.0
+  decay_end_epochs: -1    # [-1] close 
+  decay_low_weight: 0.0

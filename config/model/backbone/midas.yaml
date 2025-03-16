@@ -1,0 +1,7 @@
+name: midas
+
+pretrained: true
+weight_sensitivity: null
+mapping: original
+model: MiDaS_small
+local_dir: /home/ycb/hub/torch/hub/intel-isl_MiDaS_master

@@ -1,0 +1,28 @@
+hoi4d:
+  # Common configuration items (all datasets have these)
+  scene: null
+  cache_dir: null
+  resize_shape: null
+  patch_size: null
+  num_frames: null
+  all_frames: false 
+  use_gt_depth: false
+
+  mask_estimation: null
+  mask_flow_model: null
+  mask_binary_open_value: null 
+
+  frame_sampler: pretrain_interval
+  frame_max_interval: 4
+
+  # Dataset-specific configuration items
+  mask_blur_radius: 10.0
+  clip_t: 2.0                                          # duration of each clip (sec)
+  clip_interval: 1.0                                   # interval of each clip (sec)
+  clip_max_n: 20                                       # max number of frame of each clip 
+  meta_file: ./cache/original_datasets/HOI4D/hoi4d_release.txt
+  rgb_root: ./cache/original_datasets/HOI4D/HOI4D_release
+  depth_root: ./cache/original_datasets/HOI4D/HOI4D_depth_video
+  anno_root: ./cache/original_datasets/HOI4D/HOI4D_annotations
+  cam_root: ./cache/original_datasets/HOI4D/camera_params
+  pre_save_root: ./cache/processed_datasets   

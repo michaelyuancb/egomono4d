@@ -1,0 +1,22 @@
+arctic:
+  # Common configuration items (all datasets have these)
+  scene: null
+  cache_dir: null
+  resize_shape: null
+  patch_size: null
+  num_frames: null
+  all_frames: false  
+  use_gt_depth: false
+
+  mask_estimation: ['egohos']
+  mask_flow_model: null
+  mask_binary_open_value: null 
+
+  frame_sampler: pretrain_interval
+  frame_max_interval: 4
+
+  # Dataset-specific configuration items
+  clip_frame: 40
+  original_data_root: ./cache/original_datasets/ARCTIC/arctic/data/
+  original_render_root: ./cache/original_datasets/ARCTIC/arctic/render_out
+  pre_save_root: ./cache/processed_datasets

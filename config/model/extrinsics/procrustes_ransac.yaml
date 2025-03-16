@@ -1,0 +1,4 @@
+name: procrustes_ransac
+
+max_iter: 5
+num_points: 4800

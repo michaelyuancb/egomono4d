@@ -1,0 +1,4 @@
+tracking_3d:
+  weight: 10.0
+  enable_after: 0
+  # upper_threshold: 0.5

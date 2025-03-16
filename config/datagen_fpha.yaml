@@ -1,0 +1,86 @@
+defaults:
+  - dataset: [fpha]
+  - flow: gmflow
+  - tracking: cotracker
+  - model/backbone: nvds_unidepth             
+  - model/intrinsics: model
+  - model/extrinsics: procrustes_flow
+  - loss: [dynamic_area, cc, tracking_3d, flow_3d, shape] 
+  - visualizer: [summary]
+  - _self_
+
+base_cache_dir: ./cache
+save_dir: ./cache/models
+
+preprocess:
+  resize_shape: [300, 400]      # First resize the image into resize_shape.
+  patch_size: 32                # Then conduct center_crop with w&h divided by patch_size equal to 0. 
+  num_frames: 5
+
+
+dataset:
+  fpha:
+    clip_frame: 20
+    frame_sampler: pretrain_interval   
+    frame_max_interval: 3
+
+wandb:
+  project: egomono4d
+  mode: online
+  name: placeholder
+  group: null
+  tags: null
+
+checkpoint:
+  load: null
+
+trainer:
+  val_check_interval: 0.1
+  gradient_clip_val: 10.0
+  max_epochs: 25
+  accumulate_grad_batches: 1
+  num_nodes: 1
+  gpus: 8
+
+loss:
+  dynamic_area:
+    weight: 0.005
+    enable_after: 0
+  cc:
+    weight: 1.0
+    enable_after: 0
+  tracking_3d:
+    weight: 5.0
+    enable_after: 0 
+  flow_3d:
+    weight: 5.0
+    enable_after: 0  
+  shape:
+    weight: 4.0
+    enable_after: 0  
+    dynamic_coef: 1.0
+    decay_end_epochs: -1 
+    decay_low_weight: 1.0
+
+model_wrapper:
+  lr: 5e-5
+  cache_track: false
+
+model:
+  use_correspondence_weights: true
+
+data_module:
+  train:
+    num_workers: 4
+    persistent_workers: true
+    batch_size: 2                           # batch-size of per-gpu
+    seed: 233
+  val:
+    num_workers: 4
+    persistent_workers: true
+    batch_size: 2
+    seed: 233
+
+hydra:
+  run:
+    dir: ${save_dir}/${now:%Y-%m-%d}/${now:%H-%M-%S}
