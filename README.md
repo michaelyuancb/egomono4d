@@ -39,7 +39,7 @@ Finally, we manage the checkpoints of the off-the-shelf models together in a cac
       - unidepth-v2-vitl14.json
 ```
 
-Please download these checkpoints / weights and put them into the correct directory. 
+Please download these checkpoints / weights and put them into the correct directory. Link: [UniDepth](https://github.com/lpiccinelli-eth/UniDepth), [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release), [GMFlow](https://github.com/haofeixu/gmflow).
 
 ## Getting Start
 
@@ -109,7 +109,7 @@ where ``$MODEL_FOLDER`` is the folder of model checkpoints, ``$CONFIG_PATH`` is 
 
 ## Acknowledgment
 
-This repository is based on the code from [FlowMap](https://github.com/dcharatan/flowmap), [EgoHOI](https://github.com/michaelyuancb/ego_hoi_model), [UniDepth](https://github.com/lpiccinelli-eth/UniDepth) and [Viser](https://github.com/nerfstudio-project/viser). We sincerely appreciate their contribution to the open-source community, which have significantly supported this project.
+This repository is based on the code from [FlowMap](https://github.com/dcharatan/flowmap), [EgoHOI](https://github.com/michaelyuancb/ego_hoi_model), [UniDepth](https://github.com/lpiccinelli-eth/UniDepth), [GMFlow](https://github.com/haofeixu/gmflow), [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release) and [Viser](https://github.com/nerfstudio-project/viser). We sincerely appreciate their contribution to the open-source community, which have significantly supported this project.
 
 ## Citation
 
