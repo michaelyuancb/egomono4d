@@ -39,7 +39,7 @@ Finally, we manage the checkpoints of the off-the-shelf models together in a cac
       - unidepth-v2-vitl14.json
 ```
 
-Please download these checkpoints / weights and put them into the correct directory. Link: [UniDepth](https://github.com/lpiccinelli-eth/UniDepth), [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release), [GMFlow](https://github.com/haofeixu/gmflow).
+You could unzip the ``cache.zip`` to check the details. Please download these checkpoints / weights and put them into the correct directory. Link: [UniDepth](https://github.com/lpiccinelli-eth/UniDepth), [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release), [GMFlow](https://github.com/haofeixu/gmflow).
 
 ## Getting Start
 
