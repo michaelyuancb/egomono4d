@@ -181,11 +181,11 @@ events.out.tfevents*
 *.json
 *.tar.gz
 
-cache/cotracker_checkpoints/*
-cache/data_custom/*
-cache/ego_hos_checkpoints/*
-cache/gmflow_checkpoints/*
-cache/models/*
-cache/original_datasets/*
-cache/processed_datasets/*
-cache/unidepth_v2_checkpoints/*
+# cache/cotracker_checkpoints/*
+# cache/data_custom/*
+# cache/ego_hos_checkpoints/*
+# cache/gmflow_checkpoints/*
+# cache/models/*
+# cache/original_datasets/*
+# cache/processed_datasets/*
+# cache/unidepth_v2_checkpoints/*

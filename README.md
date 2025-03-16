@@ -27,7 +27,7 @@ pip install evo --upgrade --no-binary evo
 Finally, we manage the checkpoints of the off-the-shelf models together in a cache folder. The default directory is ```./cache```, which could be changed in the configuration file. The structure of the folder should be:
 
 ```
-- cache
+- ./cache
    - cotracker_checkpoints
       - cotracker2.pth
    - data_custom
