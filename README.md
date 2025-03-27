@@ -115,7 +115,12 @@ This repository is based on the code from [FlowMap](https://github.com/dcharatan
 
 If you find this repository useful, please kindly acknowledge our work <span id="jump">:</span>
 ```tex
-TBD
+@article{yuan2024self-supervised,
+  title={Self-Supervised Monocular 4D Scene Reconstruction for Egocentric Videos},
+  author={Yuan, Chengbo and Chen, Geng and Yi, Li and Gao, Yang},
+  journal={arXiv preprint arXiv:2411.09145},
+  year={2024}
+}
 ```
 
 
