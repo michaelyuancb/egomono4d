@@ -5,7 +5,7 @@ import pdb
 import copy
 import torch.nn.functional as F
 from einops import einsum, rearrange
-from ..model.procrustes import align_scaled_rigid_deterministic
+from ..model.procrustes import align_scaled_rigid
 import kaolin as kal
 
 FLY_THRESHOLD = 0.05
@@ -19,7 +19,7 @@ def eval_pointcloud_conductor(pred_pcd, gt_pcd, gt_flys, rgbs, commit=""):   # (
     gt_pcd_align = gt_pcd.reshape(b, f*h*w, 3)
     gt_flys_align = gt_flys.reshape(b, f*h*w)
 
-    delta_ext_scale, scale = align_scaled_rigid_deterministic(pred_pcd_align, gt_pcd_align, gt_flys_align) 
+    delta_ext_scale, scale = align_scaled_rigid(pred_pcd_align, gt_pcd_align, gt_flys_align) 
     pred_pcd_align = torch.matmul(delta_ext_scale[:, :3,:3], pred_pcd_align.permute(0,2,1)).permute(0,2,1) + delta_ext_scale[:, :3, -1][:, None]
 
     pred_pcd_align = pred_pcd_align.reshape(b, f, h*w, 3)

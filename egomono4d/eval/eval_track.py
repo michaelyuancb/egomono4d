@@ -5,7 +5,7 @@ import pdb
 import copy
 import torch.nn.functional as F
 from einops import einsum, rearrange
-from ..model.procrustes import align_scaled_rigid_deterministic
+from ..model.procrustes import align_scaled_rigid
 
 FLY_THRESHOLD = 0.05
 
@@ -18,7 +18,7 @@ def eval_track_conductor(pred_pcd, gt_pcd, gt_flys, rgbs, tracker, commit=""):  
     gt_pcd_align_base = gt_pcd[:, 0].reshape(b, h*w, 3)
     gt_flys_align_base = gt_flys[:, 0].reshape(b, h*w)
 
-    delta_ext_scale, scale = align_scaled_rigid_deterministic(pred_pcd_align_base, gt_pcd_align_base, gt_flys_align_base) 
+    delta_ext_scale, scale = align_scaled_rigid(pred_pcd_align_base, gt_pcd_align_base, gt_flys_align_base) 
     
     pred_pcd_align = pred_pcd.reshape(b, f*h*w, 3)
     gt_pcd_align = gt_pcd.reshape(b, f*h*w, 3)
