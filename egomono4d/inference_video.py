@@ -33,11 +33,9 @@ from .visualization import get_visualizers, VisualizerCoTracker
 from .config.common import get_typed_root_config
 from .config.pretrain import PretrainCfg
 from .model.model import Model
-from .misc.depth import save_estimate_depth_png
 from .misc.fly import detect_sequence_flying_pixels
-from .loss.loss_midas import compute_scale_and_shift
 from .model.model_wrapper_pretrain import ModelWrapperPretrain
-from .model.projection import sample_image_grid, unproject, homogenize_points
+from .model.procrustes import align_rigid_unweighted
 
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -64,11 +62,8 @@ def flow_visualization(rgb, xyz, video, fly_mask, tracker, save_fp="flow_vis.pkl
     # video:     f, h, w, 3
     # fly_mask:  f, h, w
 
-    # TODO: Delete the points on the edges since the interpolation has large error (due to edge effect).
-
     f, h, w, _ = video.shape
     b = 1
-    # pdb.set_trace()
     if f < 5:
         # satisfy the co-tracker demands. 
         video = np.concatenate([video] + [video[-1:]]*(5-f), axis=0)
@@ -87,10 +82,6 @@ def flow_visualization(rgb, xyz, video, fly_mask, tracker, save_fp="flow_vis.pkl
     pred_tracks = pred_tracks[pred_visibility.repeat(1,f,1)].reshape(b,f,-1,2)     # b, f, n
     xyz = xyz.reshape(f, h, w, 3)                                  # f, h, w, 3
     xyz_tensor = torch.Tensor(xyz)[None].to(device)
-
-    # pdb.set_trace()
-    # x=0
-    # Image.fromarray((fly_mask[x]*255).astype(np.uint8)).save("fly.png")
 
     fly_mask_tensor = torch.tensor(fly_mask[None]).to(device)   # (b, f, h, w)
     xyz_tensor[fly_mask_tensor == 1] = float('nan')
@@ -206,9 +197,6 @@ def model_inference_conductor(data, model_wrapper, num_frames, step_overlap, tra
                 continue
             data_clip[k] = data[k][:, seq_l:seq_r]
 
-        # model_output, loss_package, vis_png = model_wrapper.inference_step(data_clip, vis=True)
-        # vis_list.append(vis_png['summary'])
-        # Image.fromarray(vis_png['summary']).save(f'vis_inf/vis_{seq_l}_{seq_r}.png')
         model_output = model_wrapper.inference_step(data_clip, vis=False)
 
         rgbs_list.append(data_clip['videos'].cpu())
@@ -273,15 +261,6 @@ def model_inference_conductor(data, model_wrapper, num_frames, step_overlap, tra
             xyzs, rgbs, deps, intrinsics = pcd_list, rgb, depths, intrinsic
             fly_masks, weight_msk = fly_mask, weight
 
-        # pdb.set_trace()
-        # if i == len(seq_l_list) - 1:
-        #     xyzs_save = xyzs[0,-1].reshape(-1, 3)
-        #     rgbs_save = rgbs[0,-1].reshape(-1, 3)
-        #     pcd = o3d.geometry.PointCloud() 
-        #     pcd.points = o3d.utility.Vector3dVector(np.array(xyzs_save.cpu()))
-        #     pcd.colors = o3d.utility.Vector3dVector(np.array(rgbs_save.cpu()))
-        #     o3d.io.write_point_cloud("pcd_t-1"+".ply", pcd)
-
         last_seq_r = seq_r
     
     pcds_org = batch_recover_pointclouds_sequence(deps, intrinsics, torch.eye(4)[None, None])
@@ -302,60 +281,7 @@ def model_inference_conductor(data, model_wrapper, num_frames, step_overlap, tra
     return result
 
 
-# def bundle_adjustment_conductor(result, tracker):
-#     import pycolmap
-#     from .ba.tensor_to_pycolmap import batch_matrix_to_pycolmap, pycolmap_to_batch_matrix, filter_reconstruction
-
-#     b, f, h, w = result['depths'].shape
-#     recover_pcds = batch_recover_pointclouds_sequence(result['depths'], result['intrinsics'], result['extrinsics'])
-#     rgbs = result['rgbs']
-#     dy_mask = torch.concat([torch.zeros((b,1,h,w), device=DEVICE), result['weights']], dim=1)
-#     if f < 5:
-#         rgbs = torch.concat([rgbs] + [rgbs[:, -1:]]*(5-f), dim=1)
-#     tracks, visibility = tracker(rgbs*255, grid_size=50)
-#     rgbs, tracks, visibility = rgbs[:, :f], tracks[:, :f], visibility[:, :f]
-#     tracks_xy = tracks / torch.Tensor([w-1,h-1]).to(tracks.device)
-#     tracks_xy = rearrange(tracks_xy * 2 - 1, "b f p xy -> (b f) () p xy")
-#     mask_track = F.grid_sample(rearrange(result['flys'].float()*dy_mask, "b f h w -> (b f) () h w"),tracks_xy,mode="bilinear",padding_mode="border", align_corners=False,)
-#     mask_track = mask_track.reshape(b, f, -1)
-    
-#     xyz_pred_track = F.grid_sample(rearrange(recover_pcds, "b f h w xyz -> (b f) xyz h w"),tracks_xy,mode="bilinear",padding_mode="border",align_corners=False,)
-#     xyz_pred_track = rearrange(xyz_pred_track, "(b f) xyz () p -> b f p xyz", b=b, f=f)
-#     visibility = ((visibility * mask_track) == 1.0)
-#     extrinsics = result['extrinsics']
-#     intrinsics = result['intrinsics']
-#     intrinsics[..., 0, :] = intrinsics[..., 0, :] * w
-#     intrinsics[..., 1, :] = intrinsics[..., 1, :] * h
-    
-#     xyz_pred = xyz_pred_track.mean(dim=1)   # (b, p, xyz)
-#     ba_options = pycolmap.BundleAdjustmentOptions()
-#     for ib in range(b):
-#         ba_reconstruction = batch_matrix_to_pycolmap(
-#             points3d=xyz_pred[ib],
-#             extrinsics=extrinsics[ib][:,:3],
-#             intrinsics=intrinsics[ib],
-#             tracks=tracks[ib],
-#             masks=visibility[ib],
-#             image_size=torch.Tensor([h,w]).to(rgbs.device)
-#         )
-#         pycolmap.bundle_adjustment(ba_reconstruction, ba_options)
-#         ba_reconstruction = filter_reconstruction(ba_reconstruction)
-
-#         (ba_points3D_opt, ba_extrinsics, ba_intrinsics, ba_extra_params) = (
-#             pycolmap_to_batch_matrix(ba_reconstruction, device=rgbs.device)
-#         )
-
-        
-#         st,ed = 0,1
-#         xyz_v = xyz_pred.cpu()
-#         pcd = get_final_point_clouds(st, ed, np.zeros_like(xyz_v)[:,:,0], xyz_v, np.ones_like(xyz_v)) 
-#         o3d.io.write_point_cloud(f"tmp_pcd_ba_{st}_{ed}"+".ply", pcd)
-
-
-
 def put_data_batch(data):
-    # TODO: delete clip_l_r mechanism
-    # clip_l, clip_r = 200, 240
     for k, v in data.items():
         try:
             data[k] = v[None]
@@ -364,15 +290,9 @@ def put_data_batch(data):
 
 
 def put_data_device(data, device):
-    # TODO: delete clip_l_r mechanism
-    # clip_l, clip_r = 200, 240
     for k, v in data.items():
         try:
             data[k] = v.to(device)
-            # try:
-            #     data[k] = data[k][:, clip_l:clip_r]
-            # except:
-            #     pass
         except:
             pass
 
@@ -411,12 +331,6 @@ def model_result_inference(model_wrapper, dataloader, tracker, num_frames, step_
         pcds_unproj = get_final_point_clouds(st, ed, fly_masks, xyzs_unproj.reshape(len(xyzs), -1, 3), rgbs) 
         o3d.io.write_point_cloud(f"tmp_pcd_unproj_{commit}_vs{vis_i}_{scene}_{st}_{ed}"+".ply", pcds_unproj)
 
-        # # Save Flow Tracking Result
-        # pdb.set_trace()
-        # pdb.set_trace()
-        # x = 0 
-        # Image.fromarray((fly_mask_c[x]*255).astype(np.uint8)).save(f"mask_{x}.png")
-        # Image.fromarray((video_c[x]*255).astype(np.uint8)).save(f"video_{x}.png")
         st,ed = 0, len(xyzs)
         n_pt = len(xyzs[0])
         video_c = np.array(data_all['videos'][batch_idx].cpu()).transpose(0, 2, 3, 1)[st:ed]   # (f,h,w,c)
@@ -424,12 +338,6 @@ def model_result_inference(model_wrapper, dataloader, tracker, num_frames, step_
         rgb_c = np.concatenate(rgbs, axis=0)[st*n_pt:ed*n_pt].reshape(-1, n_pt, 3)              # (f,n,3)
         fly_mask_c = np.stack(fly_masks[st:ed] , axis=0)                                  # (f,h,w)
         flow_visualization(rgb_c, xyz_c, video_c, fly_mask_c.reshape(f,h,w), tracker, grid_size=35, save_fp=f"tmp_flow_{commit}_vs{vis_i}_{scene}_{st}_{ed}.pkl", device=DEVICE)
-
-        # pdb.set_trace()
-
-        # # Save Reprojection Video Result
-        # camera_base = np.array([0, 0, 0.0])
-        # generate_video(xyzs, rgbs, intrinsics, data_all, (h, w), camera_base=camera_base)
         
     pdb.set_trace()
 
@@ -475,7 +383,6 @@ def inference(cfg, fp=""):
     )
     model_wrapper.eval()
 
-    # TODO: (michael) update it to a more flexible setting.
     dataloader = DataLoader(get_dataset(cfg.dataset, "test", global_rank=0, world_size=1), batch_size=1)
     model_result_inference(model_wrapper, dataloader, tracker, cfg.preprocess.num_frames, args.step_overlap, commit=fp)
 
