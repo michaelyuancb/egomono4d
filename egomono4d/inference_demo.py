@@ -192,16 +192,13 @@ def inference_demo(args):
     args.config = args.model_dir + "/.hydra/config.yaml"
     config = OmegaConf.load(args.config)
     cfg = get_typed_root_config(config, PretrainCfg)
-    for fp in os.listdir(args.model_dir):
-        if fp.startswith("train_ddp") or fp == ".hydra" or fp.endswith('.log'):
-            continue
-        model_fp = args.model_dir + "/" + fp + "/egomono4d"
-        model_fp = model_fp + "/" + os.listdir(model_fp)[0] + "/checkpoints"
-        model_list = os.listdir(model_fp)
-        for i in range(len(model_list)):
-            if model_list[i] not in ['last.ckpt']:
-                model = model_list[i]
-        model_fp = model_fp + "/" + model
+    model_fp = args.model_dir + "/egomono4d"
+    model_fp = model_fp + "/" + os.listdir(model_fp)[0] + "/checkpoints"
+    model_list = os.listdir(model_fp)
+    for i in range(len(model_list)):
+        if model_list[i] not in ['last.ckpt']:
+            model = model_list[i]
+    model_fp = model_fp + "/" + model
     cfg.model.backbone.cache_dir = cfg.base_cache_dir
     cfg.flow.cache_dir = cfg.base_cache_dir
     print("Finish Prepare Configuration.")

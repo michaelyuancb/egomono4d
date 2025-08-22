@@ -10,6 +10,8 @@ EgoMono4D is an early exploration to **apply self-supervised learning for genera
 
 ## Installation
 
+### Install Conda Environment
+
 First build the basic environment: 
 ```
 conda create -n egomono4d python=3.11
@@ -17,12 +19,38 @@ conda activate egomono4d
 conda install -y pytorch==2.0.1 torchvision cudatoolkit=11.7 -c pytorch -c nvidia
 ```
 
-Our project is based on [UniDepth](https://github.com/lpiccinelli-eth/UniDepth) and [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release). Please then install these two repositories locally (Remember to switch the branch of cotracker to cotracker2v1_release). After that, please run the following commands:
+### Install UniDepthV1.5 and CoTrackerV2
+
+Our project is based on [UniDepth](https://github.com/lpiccinelli-eth/UniDepth) (bebc4b2) and [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release). These two repositories have made updation after our project release. Therefore, we need to roll back to the specific commits and then install them.
+
+For UniDepth, we depend on the commit **bebc4b2**. You could run the following commands to install it:
+```
+git clone https://github.com/lpiccinelli-eth/UniDepth.git
+cd UniDepth
+git reset --hard bebc4b2
+pip install -e .
+```
+
+For CoTracker, we depend on CotrackerV2 version, which is the **cotracker2v1_release** branch of the official repository. Run the following commands to install it:
+
+```
+git clone --branch cotracker2v1_release --single-branch https://github.com/facebookresearch/co-tracker.git
+cd co-tracker
+pip install -e .
+```
+
+### Install Dependencies
 ```
 pip install -r requirement.txt
+```
+
+If you want to conduct evaluation, please also install these:
+```
 pip install kaolin==0.16.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.0.1_cu117.html
 pip install evo --upgrade --no-binary evo
 ```
+
+### Handle Pretrained Models Through Cache Folder
 
 Finally, we manage the checkpoints of the off-the-shelf models together in a cache folder. The default directory is ```./cache```, which could be changed in the configuration file. The structure of the folder should be:
 
