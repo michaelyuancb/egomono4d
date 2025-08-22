@@ -14,10 +14,10 @@ First build the basic environment:
 ```
 conda create -n egomono4d python=3.11
 conda activate egomono4d
-conda install -y pytorch==2.0.1 torchvision cudatoolkit=11.7 -c pytorch -c nvidia
+conda install -y pytorch==2.0.1 torchvision cudatoolkit=11.8 -c pytorch -c nvidia
 ```
 
-Our project is based on [UniDepth](https://github.com/lpiccinelli-eth/UniDepth) and [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release). Please then install these two repositories locally. After that, please run the following commands:
+Our project is based on [UniDepth](https://github.com/lpiccinelli-eth/UniDepth) and [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release). Please then install these two repositories locally (Remember to switch the branch of cotracker to cotracker2v1_release). After that, please run the following commands:
 ```
 pip install -r requirement.txt
 pip install kaolin==0.16.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.0.1_cu117.html
