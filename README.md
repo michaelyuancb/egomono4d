@@ -14,7 +14,7 @@ First build the basic environment:
 ```
 conda create -n egomono4d python=3.11
 conda activate egomono4d
-conda install -y pytorch==2.0.1 torchvision==0.15.0 cudatoolkit=11.7 -c pytorch -c nvidia
+conda install -y pytorch==2.0.1 torchvision cudatoolkit=11.7 -c pytorch -c nvidia
 ```
 
 Our project is based on [UniDepth](https://github.com/lpiccinelli-eth/UniDepth) and [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release). Please then install these two repositories locally. After that, please run the following commands:
