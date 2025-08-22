@@ -264,4 +264,4 @@ tokenizers
 timm
 transformers
 viser
-flow_vis_torch @ git+https://github.moeyy.xyz/https://github.com/ChristophReich1996/Optical-Flow-Visualization-PyTorch@9177370c7c00b4b7dbe4deda6fed734fdff48b2c
+flow_vis_torch @ git+https://github.com/ChristophReich1996/Optical-Flow-Visualization-PyTorch@9177370c7c00b4b7dbe4deda6fed734fdff48b2c
