@@ -69,6 +69,19 @@ Finally, we manage the checkpoints of the off-the-shelf models together in a cac
 
 You could unzip the ``cache.zip`` to check the details. Please download these checkpoints / weights and put them into the correct directory. Link: [UniDepth](https://github.com/lpiccinelli-eth/UniDepth), [CoTrackerV2](https://github.com/facebookresearch/co-tracker/tree/cotracker2v1_release), [GMFlow](https://github.com/haofeixu/gmflow).
 
+These commands download the corresponding checkpoints from Hugging Face. Replace `/path/to/cache` with your own local directory path.
+
+```
+# download Unidepth checkpoints from huggingface
+huggingface-cli download lpiccinelli/unidepth-v2-vitl14 --revision 1d0d3c5 --local-dir /path/to/cache/unidepth_v2_checkpoints/
+
+# download gmflow checkpoints from huggingface
+huggingface-cli download pranay-ar/unimatch gmflow-scale1-mixdata-train320x576-4c3a6e9a.pth --local-dir /path/to/cache/gmflow_checkpoints/
+
+#download cotracker checkpoints from huggingface
+huggingface-cli download facebook/cotracker cotracker2.pth  --local-dir /path/to/cache/cotracker_checkpoints/
+```
+
 ## Getting Start
 
 To run the example of EgoMono4D, first download the **[pretrain weight](https://drive.google.com/file/d/1aEiXgdCX2LfQydIkPQroGlIvYNPyY01M/view?usp=sharing)** (ptr_all_350k) and put it in ``./cache/models``. Then run the below command: 
@@ -94,7 +107,7 @@ result = {
 We provide a script for 4D visualization. Please run: 
 ```
 python -m egomono4d.demo_viser -f result_example_epic_kitchen.pkl
-``` 
+```
 and then open ``http://localhost:8080/`` in your browser. An interactable GUI for will be available for better 4D result visualization.
 
 ![vis_script_pic](assets/vis-result.png "vis_script_pic")
@@ -131,7 +144,7 @@ For evaluation, please run:
 
 ```
 python -m egomono4d.evaluation -f $MODEL_FOLDER -b $BATCH_SIZE -c $CONFIG_PATH
-``` 
+```
 
 where ``$MODEL_FOLDER`` is the folder of model checkpoints, ``$CONFIG_PATH`` is the path of evaluation configuration file, which could be found in ``./config`` (e.g. ``./config/pretrain_eval_hoi4d.yaml``). The evaluation results will be saved in a json file. 
 
